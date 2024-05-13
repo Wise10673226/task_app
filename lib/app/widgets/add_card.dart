@@ -4,17 +4,25 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:task_app/app/core/utils/extensions.dart';
 import 'package:task_app/app/data/models/task.dart';
+import 'package:task_app/app/modules/detail/view.dart';
 import 'package:task_app/app/modules/home/controller.dart';
 import 'package:task_app/app/widgets/icons.dart';
 
-class AddCard extends StatelessWidget {
+class AddCard extends StatefulWidget {
+  const AddCard({super.key});
+
+  @override
+  State<AddCard> createState() => _AddCardState();
+}
+
+class _AddCardState extends State<AddCard> {
   final homeCtrl = Get.find<HomeController>();
-  AddCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     final icons = getIcons();
     var squarewidth = Get.width - 12.0.wp;
+
     return Container(
       width: squarewidth / 2,
       height: squarewidth / 2,
@@ -57,9 +65,8 @@ class AddCard extends StatelessWidget {
                                       selected:
                                           homeCtrl.chipIndex.value == index,
                                       onSelected: (bool selected) {
-                                        homeCtrl.chipIndex.value == selected
-                                            ? index
-                                            : 0;
+                                        homeCtrl.chipIndex.value =
+                                            selected ? index : 0;
                                       },
                                     );
                                   }))
@@ -73,24 +80,26 @@ class AddCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(20)),
                               minimumSize: Size(150, 40)),
                           onPressed: () {
-                            if (homeCtrl.formKey.currentState!.validate()) {
-                              int icon = icons[homeCtrl.chipIndex.value]
-                                  .icon!
-                                  .codePoint;
-                              String color = icons[homeCtrl.chipIndex.value]
-                                  .color!
-                                  .toHex();
-                              var task = Task(
+                            setState(() {
+                              if (homeCtrl.formKey.currentState!.validate()) {
+                                int icon = icons[homeCtrl.chipIndex.value]
+                                    .icon!
+                                    .codePoint;
+                                String color = icons[homeCtrl.chipIndex.value]
+                                    .color!
+                                    .toHex();
+                                var task = Task(
                                   title: homeCtrl.editCtrl.text,
                                   icon: icon,
                                   color: color,
-                                  todos: []);
-                              Get.back();
-                              homeCtrl.addTask(task)
-                                  ? EasyLoading.showSuccess(
-                                      'Created Successfully')
-                                  : EasyLoading.showError('Duplicated Task');
-                            }
+                                );
+                                Get.back();
+                                homeCtrl.addTask(task)
+                                    ? EasyLoading.showSuccess(
+                                        'Created Successfully')
+                                    : EasyLoading.showError('Duplicated Task');
+                              }
+                            });
                           },
                           child: Text('Confirm'))
                     ],
@@ -100,6 +109,8 @@ class AddCard extends StatelessWidget {
           homeCtrl.changeChipIndex(0);
         },
         child: DottedBorder(
+          borderType: BorderType.RRect,
+          radius: Radius.circular(20),
           color: Colors.grey[400]!,
           dashPattern: [8, 4],
           child: Center(

@@ -4,13 +4,13 @@ class Task extends Equatable {
   final String title;
   final int icon;
   final String color;
-  final List<dynamic> todos;
+  final List<dynamic>? todos;
 
   const Task({
     required this.title,
     required this.icon,
     required this.color,
-    required this.todos,
+    this.todos,
   });
   Task copyWith(
           {String? title, int? icon, String? color, List<dynamic>? todos}) =>
